@@ -38,8 +38,6 @@ class UserController extends Controller
             'role'=>$role,
             'role_id'=>$addRole['id']]);
 
-
-
     }
 
     $result = [
@@ -52,14 +50,49 @@ class UserController extends Controller
 
 }
 
+
+
+
+
+
 public function login(Request $request){
 
     $username =$request->username;
     $password = $request->password;
 
+    $inputs = $request->all();
 
+    $rules = [
+        'username'=>'required',
+        'password'=>'required',
+    ];
 
+    $validator = Validator::make($inputs,$rules);
 
-}
+    if($validator->fails()){
+
+        return response(['message'=>$validator->errors()]);
+    }else{
+
+        $findUser = User::where('username',$username)->first();
+
+        if(!$findUser){
+            return response(['message'=>'Username not found'],404);
+        }
+
+        $passwordHash = $findUser->password;
+
+        if (Hash::check($password,  $passwordHash)) {
+
+            return response(['message'=>'嗨，好久不見：'.$username.'，您的資料如下：',
+            'data'=>$findUser],200);
+        }else{
+            return response(['message'=>'Wrong password'],401);
+
+        }
+
+    }
+
+    }
 
 }
