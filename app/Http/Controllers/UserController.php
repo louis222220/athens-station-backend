@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Validator;
 use App\User;
+use App\Role;
 
 class UserController extends Controller
 {
@@ -29,16 +30,22 @@ class UserController extends Controller
             return response(['message'=>$validator->errors()],409);
         }else{
 
-            User::create(['username'=>$username,
+            $addRole = Role::create(['name'=>$role]);
+
+            $addUser = User::create(['username'=>$username,
             'password'=>$password,
-            'role'=>$role]);
+            'role'=>$role,
+            'role_id'=>$addRole['id']]);
+
+
 
     }
 
     $result = [
+        'role'=>$role,
         'username' => $username,
-        'password'=>$password,
-        'role'=>$role
+        'password'=>$password
+
    ];
    return response()->json($result,201);
 
