@@ -15,7 +15,7 @@ class GoodController extends Controller
      */
     public function index()
     {
-        $allGoods =Good::all();
+        $allGoods =Good::with('start_station','des_station','now_station')->get();
         $result = [
             'message'=>'取得所有貨物',
             'data'=>$allGoods
@@ -41,11 +41,7 @@ class GoodController extends Controller
      */
     public function store(Request $request)
     {
-                // $name = $request->name;
-        // $des = $request->description;
-        // $weight = $request->weight;
-        // $photo = $request->photo_path;
-        // $des_id = $request->des_station_id;
+
         $role = $request->user()->role_id;
 
         if($role !== 1){
@@ -81,10 +77,11 @@ class GoodController extends Controller
             'start_station_id'=>$request->start_station_id,
             'now_station_id'=>$request->start_station_id
         ]);
+        $Goods =Good::with('start_station','des_station','now_station')->get();
 
         $result = [
             'message' => '已登錄運送貨品',
-            'data' =>$addGood,
+            'data' =>$Goods,
        ];
        return response()->json($result);
     }
@@ -132,5 +129,10 @@ class GoodController extends Controller
     public function destroy(Good $good)
     {
         //
+    }
+
+    public function upload(){
+
+        // $path = $request->
     }
 }
