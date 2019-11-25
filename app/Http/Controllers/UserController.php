@@ -7,6 +7,7 @@ use Validator;
 use App\User;
 use App\Role;
 use Illuminate\Support\Facades\Hash;
+use Str;
 
 class UserController extends Controller
 {
@@ -36,7 +37,8 @@ class UserController extends Controller
             $addUser = User::create(['username'=>$username,
             'password'=>Hash::make($request->password),
             'role'=>$role,
-            'role_id'=>$addRole['id']]);
+            'role_id'=>$addRole['id'],
+            'api_token'=>Str::random(15)]);
 
     }
 
@@ -49,11 +51,6 @@ class UserController extends Controller
    return response()->json($result,201);
 
 }
-
-
-
-
-
 
 public function login(Request $request){
 
