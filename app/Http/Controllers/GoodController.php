@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Good;
 use Illuminate\Http\Request;
+use Validator;
 
 class GoodController extends Controller
 {
@@ -40,9 +41,11 @@ class GoodController extends Controller
         // $weight = $request->weight;
         // $photo = $request->photo_path;
         // $des_id = $request->des_station_id;
-        $id = $request->user()->role_id;
+        $role = $request->user()->role_id;
 
-        dd($id);
+        if($role !== 1){
+            return response(['message' => 'Can not comming'], 404);
+        }
 
         $input =$request->all();
 
@@ -50,8 +53,11 @@ class GoodController extends Controller
             'name' => 'required',
             'description' => 'required',
             'weight' => 'required',
-            'photo_path' => 'required',
+           // 'photo_path' => 'required',
             'des_station_id' => 'required',
+            'price'=>'required',
+            "start_station_id"=>'required',
+            "now_station_id"=>'required'
         ];
 
         $validator = Validator::make($input,$rules);
@@ -64,9 +70,19 @@ class GoodController extends Controller
             'name'=>$request->name,
             'description'=>$request->description,
             'weight'=>$request->weight,
-            'photo_path'=>$request->photo_path,
-            'des_station_id'=>$request->des_station_id
+            'photo_path'=>'path',
+            'des_station_id'=>$request->des_station_id,
+            'price'=>$request->price,
+            'status'=>'準備中',
+            'start_station_id'=>$request->start_station_id,
+            'now_station_id'=>$request->now_station_id
         ]);
+
+        $result = [
+            'message' => '已登錄運送貨品',
+            'data' =>$addGood,
+       ];
+       return response()->json($result);
     }
 
     /**

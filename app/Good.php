@@ -11,6 +11,10 @@ class Good extends Model
         'des_station_id', 'now_station_id', 'price', 'status'
     ];
 
+    protected $hidden = [
+        'photo_path',
+    ];
+
     public function start_station()
     {
         return  $this->belongsTo('App\Station', 'start_station_id');

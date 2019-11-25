@@ -23,4 +23,4 @@ Route::post('/login','UserController@login');
 
 Route::get('/users','UserController@index')->middleware('auth:api');
 
-Route::post('/goods/add','GoodController@store')->middleware('auth:api');
+Route::post('/goods','GoodController@store')->middleware('auth:api');
