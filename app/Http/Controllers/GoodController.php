@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Good;
+use App\Station;
 use Illuminate\Http\Request;
 use Validator;
 
@@ -55,9 +56,9 @@ class GoodController extends Controller
             'description' => 'required',
             'weight' => 'required',
            // 'photo_path' => 'required',
-            'des_station_id' => 'required',
+            'des_station_name' => 'required',
             'price'=>'required',
-            "start_station_id"=>'required',
+            "start_station_name"=>'required',
         ];
 
         $validator = Validator::make($input,$rules);
@@ -66,16 +67,22 @@ class GoodController extends Controller
             return response(['message'=>$validator->errors()]);
         }
 
+        $destination = Station::where('name',$request->des_station_name)->first();
+        $destination_id = $destination->id;
+
+        $start_station = Station::where('name',$request->start_station_name)->first();
+        $start_station_id =$start_station->id;
+
         $addGood = Good::create([
             'name'=>$request->name,
             'description'=>$request->description,
             'weight'=>$request->weight,
             'photo_path'=>'path',
-            'des_station_id'=>$request->des_station_id,
+            'des_station_id'=>$destination_id,
             'price'=>$request->price,
             'status'=>'準備中',
-            'start_station_id'=>$request->start_station_id,
-            'now_station_id'=>$request->start_station_id
+            'start_station_id'=>$start_station_id,
+            'now_station_id'=>$start_station_id
         ]);
         $Goods =Good::with('start_station','des_station','now_station')->get();
 
@@ -131,8 +138,8 @@ class GoodController extends Controller
         //
     }
 
-    public function upload(){
+    public function upload(Request $request){
 
-        // $path = $request->
+         $path = $request->photo->store('images');
     }
 }
