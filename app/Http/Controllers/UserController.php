@@ -33,13 +33,13 @@ class UserController extends Controller
             return response(['message' => $validator->errors()], 409);
         } else {
 
-            $addRole = Role::create(['name' => $role]);
+            $findRole = Role::where('name',$role)->first();
 
             $addUser = User::create([
                 'username' => $username,
                 'password' => Hash::make($request->password),
                 'role' => $role,
-                'role_id' => $addRole['id'],
+                'role_id' => $findRole->id,
                 'api_token' => Str::random(15)
             ]);
         }
