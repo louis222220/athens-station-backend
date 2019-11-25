@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Validator;
 use App\User;
 use App\Role;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -33,7 +34,7 @@ class UserController extends Controller
             $addRole = Role::create(['name'=>$role]);
 
             $addUser = User::create(['username'=>$username,
-            'password'=>$password,
+            'password'=>Hash::make($request->password),
             'role'=>$role,
             'role_id'=>$addRole['id']]);
 
@@ -50,4 +51,15 @@ class UserController extends Controller
    return response()->json($result,201);
 
 }
+
+public function login(Request $request){
+
+    $username =$request->username;
+    $password = $request->password;
+
+
+
+
+}
+
 }
