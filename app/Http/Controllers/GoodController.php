@@ -44,6 +44,7 @@ class GoodController extends Controller
     {
 
         $role = $request->user()->role_id;
+        //$path = $request->photo->store('images');
 
         if($role !== 1){
             return response(['message' => 'Can not comming'], 404);
@@ -68,16 +69,19 @@ class GoodController extends Controller
         }
 
         $destination = Station::where('name',$request->des_station_name)->first();
+//if判斷輸入城市是否正確
         $destination_id = $destination->id;
 
         $start_station = Station::where('name',$request->start_station_name)->first();
         $start_station_id =$start_station->id;
 
+
+
         $addGood = Good::create([
             'name'=>$request->name,
             'description'=>$request->description,
             'weight'=>$request->weight,
-            'photo_path'=>'path',
+            'photo_path'=>"path",
             'des_station_id'=>$destination_id,
             'price'=>$request->price,
             'status'=>'準備中',
@@ -138,8 +142,8 @@ class GoodController extends Controller
         //
     }
 
-    public function upload(Request $request){
+    // public function upload(Request $request){
 
-         $path = $request->photo->store('images');
-    }
+    //      $path = $request->photo->store('images');
+    // }
 }

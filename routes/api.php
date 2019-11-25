@@ -36,6 +36,6 @@ Route::post('/login','UserController@login');
 
 Route::post('/stations','StationController@store');
 
-Route::post('/image','GoodController@upload');
+// Route::post('/image','GoodController@upload');
 
 

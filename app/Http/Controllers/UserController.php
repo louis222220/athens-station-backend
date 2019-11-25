@@ -33,7 +33,7 @@ class UserController extends Controller
             return response(['message' => $validator->errors()], 409);
         } else {
 
-            $findRole = Role::where('name',$role)->first();
+            $findRole = Role::where('name', $role)->first();
 
             $addUser = User::create([
                 'username' => $username,
@@ -93,7 +93,14 @@ class UserController extends Controller
         }
     }
 
-    public function index(){
-        return User::all();
+    public function index(Request $request)
+    {
+        // $role = $request->user()->role_id;
+
+        // if($role !== 1){
+        //     return response(['message' => 'Can not comming'], 404);
+        // }
+
+
     }
 }
