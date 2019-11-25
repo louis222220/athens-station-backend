@@ -14,7 +14,11 @@ class StationController extends Controller
      */
     public function index()
     {
-        //
+        $allStation = Station::all();
+        $result = [
+            'data'=>$allStation
+        ];
+        return response()->json($result);
     }
 
     /**
@@ -35,7 +39,11 @@ class StationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $name = $request->name;
+
+        $addStation = Station::create(['name'=>$name]);
+
+        return $addStation;
     }
 
     /**

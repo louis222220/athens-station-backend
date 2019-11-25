@@ -15,7 +15,12 @@ class GoodController extends Controller
      */
     public function index()
     {
-        //
+        $allGoods =Good::all();
+        $result = [
+            'message'=>'取得所有貨物',
+            'data'=>$allGoods
+        ];
+        return response()->json($result);
     }
 
     /**
@@ -57,7 +62,6 @@ class GoodController extends Controller
             'des_station_id' => 'required',
             'price'=>'required',
             "start_station_id"=>'required',
-            "now_station_id"=>'required'
         ];
 
         $validator = Validator::make($input,$rules);
@@ -75,7 +79,7 @@ class GoodController extends Controller
             'price'=>$request->price,
             'status'=>'準備中',
             'start_station_id'=>$request->start_station_id,
-            'now_station_id'=>$request->now_station_id
+            'now_station_id'=>$request->start_station_id
         ]);
 
         $result = [

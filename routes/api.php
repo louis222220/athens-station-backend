@@ -17,10 +17,22 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::group(['middleware' => ['auth:api']], function () {
+
+
+    Route::get('/users','UserController@index');
+
+    Route::post('/goods','GoodController@store');
+
+    Route::get('/goods','GoodController@index');
+
+    Route::get('/stations','StationController@index');
+
+});
+
 Route::post('/register','UserController@register');
 
 Route::post('/login','UserController@login');
 
-Route::get('/users','UserController@index')->middleware('auth:api');
+Route::post('/stations','StationController@store');
 
-Route::post('/goods','GoodController@store')->middleware('auth:api');
