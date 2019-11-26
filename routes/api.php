@@ -30,7 +30,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     Route::post('/image','GoodController@upload');
 
-    Route::post('/tasks','ShipmentController@task');
+    Route::get('/tasks','ShipmentController@task');
 
 });
 
@@ -41,5 +41,5 @@ Route::post('/login','UserController@login');
 Route::post('/stations','StationController@store');
 
 
-
+Route::post('/test/goods','GoodController@test');//test
 
