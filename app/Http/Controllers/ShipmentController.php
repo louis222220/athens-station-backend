@@ -70,10 +70,14 @@ class ShipmentController extends Controller
         $shipment_id = $request->shipment_id;
         $runner_id = Auth::user()->id;
 
-        $authData = Auth::user();
+        $alreadyShipment = Shipment::where('runner_id', $runner_id)->first();
+        if ($alreadyShipment){
+            return response()->json([
+                'message' => '已接單，請勿重複接單'
+            ], 409);
+        }
 
         $findShipment = Shipment::where('id', $shipment_id)->first();
-
         $update = $findShipment->update(['runner_id' => $runner_id]);
 
         return response()->json($findShipment);
