@@ -90,17 +90,30 @@ class ShipmentController extends Controller
 
         // $out = new \Symfony\Component\Console\Output\ConsoleOutput();
         // $out->writeln(Carbon::now());
-
+        //$out->writeln($a);
 
         $shipment_id = $request->shipment_id;
 
         //拿到所有的物品紀錄
-        $allGood = Good::all();
+        $allGoods = Good::all();
+        //$toarray = $allGoods->toArray();
 
-        //先取出各自的id數字
-        $yadian = Station::find(1)->id;
+        foreach($allGoods as $allGood){
 
-        //$out->writeln($a);
+            return $allGood;
+
+
+        //     for($i = $good->start_station;$i<$good->des_station; $i++){
+
+        // }
+
+
+
+        }
+
+
+
+
 
 
 
