@@ -218,7 +218,8 @@ class GoodController extends Controller
                 Shipment::create(['good_id'=>$good_id,
                 //'runner_id'=>$runner_id,
                 'start_station_id'=>$a,
-                'des_station_id'=>$b]);
+                'des_station_id'=>$b,
+                'good_name'=>$addGood->name]);
 
             }
 

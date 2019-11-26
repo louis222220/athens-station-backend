@@ -30,7 +30,12 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     Route::post('/image','GoodController@upload');
 
-    Route::get('/tasks','ShipmentController@task');
+    Route::post('/tasks','ShipmentController@store');
+
+    Route::get('/tasklist','ShipmentController@index');
+
+    Route::get('/checkin','ShipmentController@checkin');
+
 
 });
 

@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Shipment;
 use App\Station;
 use App\Good;
+use Auth;
 use Illuminate\Http\Request;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class ShipmentController extends Controller
 {
@@ -16,7 +18,18 @@ class ShipmentController extends Controller
      */
     public function index()
     {
-        //
+
+        $tasklist = Shipment::all();
+
+        $result = [
+            'message'=>'任務列表',
+            'data'=>$tasklist
+        ];
+
+        return response()->json($result);
+
+
+
     }
 
     /**
@@ -37,7 +50,17 @@ class ShipmentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $shipment_id = $request->shipment_id;
+        $runner_id =Auth::user()->id;
+
+        $authData = Auth::user();
+
+        $findShipment = Shipment::where('id',$shipment_id)->first();
+
+        $update = $findShipment->update(['runner_id'=>$runner_id]);
+
+        return response()->json($findShipment);
+
     }
 
     /**
@@ -85,7 +108,9 @@ class ShipmentController extends Controller
         //
     }
 
+    public function checkIn(){
 
+    }
 
 
 
