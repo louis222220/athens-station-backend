@@ -37,6 +37,8 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     Route::post('/checkin','ShipmentController@checkin');
 
+    Route::post('/checkout','ShipmentController@checkout');
+
 
 });
 
