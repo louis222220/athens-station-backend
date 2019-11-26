@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Shipment;
 
 class Station extends Model
 {
@@ -26,9 +27,20 @@ class Station extends Model
     }
 
 
-    protected function tmp()
+    protected function calculateTotalWeightOfShipment()
     {
-        return 200;
+        $shipmentFinishedStr = "已完成";
+        
+        $shipments = Shipment::where('start_station_id', $this->id)
+                                ->where('status', $shipmentFinishedStr)->get();
+
+        $totalWeight = 0;
+        foreach($shipments as $shipment)
+        {
+            $totalWeight += $shipment->good->weight;
+        }
+
+        return $totalWeight;
     }
 
     public function getLevelAttribute()
@@ -37,19 +49,19 @@ class Station extends Model
         $levelInterval = [100, 500, 1000, 5000];
         // level 1 : 0~99, level 2 : 100~499 ...
         
-        // FIXME: 
-        return $levels[
-            rand(0, 3) % count($levels)
-        ];
+        $totalWeight = $this->calculateTotalWeightOfShipment();
+        
+        for($i = count($levels) - 1; $i >= 0; $i--){
+            if ($totalWeight >= $levelInterval[$i]){
+                return $levels[$i];
+            }
+        }
+        return 0;
     }
 
     public function getTotalWeightAttribute()
     {   
-        // FIXME: 
-        $tmpTotalWeights = [10, 120, 700, 1200, 6500];
-        return $tmpTotalWeights[
-            rand(0, 5000) % count($tmpTotalWeights)
-        ];
+        return $this->calculateTotalWeightOfShipment();
     }
 }
 
