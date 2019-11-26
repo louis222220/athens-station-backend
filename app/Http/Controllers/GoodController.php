@@ -81,7 +81,7 @@ class GoodController extends Controller
             'name'=>$request->name,
             'description'=>$request->description,
             'weight'=>$request->weight,
-            'photo_path'=>"path",
+            //'photo_path'=>"path",
             'des_station_id'=>$destination_id,
             'price'=>$request->price,
             'status'=>'準備中',
