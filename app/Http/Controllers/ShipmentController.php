@@ -29,6 +29,27 @@ class ShipmentController extends Controller
         return response()->json($result);
     }
 
+
+    public function getMyTask(Request $request)
+    {
+        $runner_id = Auth::user()->id;
+
+
+        $findShipment = Shipment::where('runner_id', $runner_id)
+                                ->where('status', '準備中')->first();
+
+        if (findShipment){
+            return response()->json($findShipment);
+        }
+        else {
+            return response()->json([
+                'message' => "尚未接單"
+            ], 404);
+        }
+        
+    }
+
+
     /**
      * Show the form for creating a new resource.
      *
