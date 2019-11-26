@@ -18,7 +18,7 @@ class CreateGoodsTable extends Migration
             $table->string('name');
             $table->text('description');
             $table->float('weight', 8, 2);
-            $table->string('photo_path');
+            $table->string('photo_path')->nullable();
 
             $table->integer('start_station_id');
             $table->integer('des_station_id');
