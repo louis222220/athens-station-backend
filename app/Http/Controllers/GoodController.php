@@ -215,11 +215,20 @@ class GoodController extends Controller
                 $a = $total - $i;
                 $b = $a-1;
 
+                $status = '';
+                if ($i == -1) {
+                    $status = '準備中';
+                }
+                else {
+                    $status = '未準備';
+                }
+                
                 Shipment::create(['good_id'=>$good_id,
-                //'runner_id'=>$runner_id,
-                'start_station_id'=>$a,
-                'des_station_id'=>$b,
-                'good_name'=>$addGood->name]);
+                    'start_station_id'=>$a,
+                    'des_station_id'=>$b,
+                    'good_name'=>$addGood->name,
+                    'status' => $status,
+                ]);
 
             }
 

@@ -70,16 +70,29 @@ class ShipmentController extends Controller
         $shipment_id = $request->shipment_id;
         $runner_id = Auth::user()->id;
 
-        $alreadyShipment = Shipment::where('runner_id', $runner_id)->first();
+        $alreadyShipment = Shipment::where('runner_id', $runner_id)
+                                        ->where('status', '準備中')->first();
         if ($alreadyShipment){
             return response()->json([
                 'message' => '已接單，請勿重複接單'
             ], 409);
         }
 
-        $findShipment = Shipment::where('id', $shipment_id)->first();
-        $update = $findShipment->update(['runner_id' => $runner_id]);
 
+        $findShipment = Shipment::where('id', $shipment_id)->first();
+        if (! $findShipment) {
+            return response()->json([
+                'message' => "無此訂單",
+            ], 404);
+        }
+
+        if ($findShipment->status != '準備中') {
+            return response()->json([
+                'message' => "無法接單，該訂單狀態為$findShipment->status",
+            ], 409);
+        }
+
+        $findShipment->update(['runner_id' => $runner_id]);
         return response()->json($findShipment);
     }
 
@@ -130,70 +143,87 @@ class ShipmentController extends Controller
 
     public function checkin(Request $request)
     {
-        $start_station_name = $request->start_station_name;
+        $reqStartStationName = $request->start_station_name;
 
-        $id = Auth::user()->id;
+        $runnerId = Auth::user()->id;
 
-        $shipment = Shipment::where('runner_id', $id)->first(); //該跑者的運送資料
+        $toShipShipment = Shipment::where('runner_id', $runnerId)
+                                ->where('status', '準備中')->first(); //該跑者的運送資料
 
-        $req_station_name = Station::where('name', $start_station_name)->value('id'); //比對cityname與station id一致
+        if (! $toShipShipment) {
+            return response()->json([
+                'message' => '尚未接單'
+            ], 409);
+        }
 
-        $db_station_id = $shipment->start_station_id;
+        $reqStartStationId = Station::where('name', $reqStartStationName)->value('id'); //比對cityname與station id一致
 
-        if ($req_station_name == $db_station_id) {
-            $updateStatus = Shipment::where('runner_id', $id)->first()->update(['status' => '運送中']);
+        $toShipShipmentStartStationId = $toShipShipment->start_station_id;
 
-            $db_shipment_good_id = $shipment->good_id;
-            $updateGoodStatus = Good::where('id', $db_shipment_good_id)->first()->update(['status' => '運送中']);
+        if ($reqStartStationId == $toShipShipmentStartStationId) {
+            $toShipShipment->update(['status' => '運送中']);
+
+            $toShipShipment->good->update(['status' => '運送中']);
 
             $results = [
                 'message' => '運送中',
-                'data' => $shipment
+                'data' => $toShipShipment
             ];
 
             return response()->json($results);
-        } else {
-            return response(['message' => '請跟驛站人員確認！']);
+        }
+        else {
+            return response()->json([
+                'message' => '請查詢貨品位置，並掃描正確驛站'
+            ]);
         }
     }
 
     public function checkout(Request $request)
     {
-        $des_station_name = $request->des_station_name;
+        $reqDesStationName = $request->des_station_name;
 
-        $id = Auth::user()->id;
+        $runnerId = Auth::user()->id;
 
-        $shipment = Shipment::where('runner_id', $id)->first(); //該跑者的運送資料
+        $shippingShipment = Shipment::where('runner_id', $runnerId)
+                                ->where('status', '運送中')->first(); //該跑者的運送資料
 
-        $status = $shipment->status;
-
-        if ($status !== '運送中') {
-            return response(['message' => '非運送中，請與驛站人員確認']);
+        if (! $shippingShipment){
+            return response()->json([
+                'message' => '未運送貨品，請至列表接單'
+            ], 409);
         }
 
-        $req_station_name = Station::where('name', $des_station_name)->value('id'); //比對cityname與station id一致
+        $reqDesStationId = Station::where('name', $reqDesStationName)->value('id'); //比對cityname與station id一致
 
-        $db_station_id = $shipment->des_station_id;
-        $db_shipment_good_id = $shipment->good_id;
+        $shippingShipmentDesStationId = $shippingShipment->des_station_id;
+        $shippingGood = $shippingShipment->good;
 
-        $db_good = Good::where('id', $db_shipment_good_id)->first();
-        $good_des_id = $db_good->des_station_id;
+        $shippingGoodDesStationId = $shippingGood->des_station_id;
 
-        if ($req_station_name == $db_station_id) {
-            $shipment->update(['status' => '已抵達']);
+        if ($reqDesStationId == $shippingShipmentDesStationId) {
+            $shippingShipment->update(['status' => '已抵達']);
 
-            if ($good_des_id == $shipment->good->des_station_id) {
-                $shipment->good->update(['status' => '已抵達']);
+            if ($shippingGoodDesStationId == $shippingShipmentDesStationId) {
+                $shippingGood->update(['status' => '已抵達']);
+            }
+            else{
+                $nextShipment = Shipment::where('good_id', $shippingGood->id)
+                                        ->where('start_start_id', $shippingShipmentDesStationId);
+                $nextShipment->update(['status' => '準備中']);
             }
 
             $results = [
                 'message' => '此段運送結束',
-                'data' => $shipment
+                'data' => $shippingShipment
             ];
 
             return response()->json($results);
-        } else {
-            return response(['message' => '請跟驛站人員確認！']);
+        } 
+        else {
+            return response()->json([
+                'message' => '請查詢貨品資訊，並送至正確目的地'
+            ], 409);
         }
     }
 }
