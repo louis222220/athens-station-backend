@@ -46,7 +46,7 @@ class GoodController extends Controller
         $role = $request->user()->role_id;
         //$path = $request->photo->store('images');
 
-        if($role !== 1){
+        if($role !== 2){
             return response(['message' => 'Can not comming'], 404);
         }
 
@@ -142,8 +142,16 @@ class GoodController extends Controller
         //
     }
 
-    // public function upload(Request $request){
+    public function upload(Request $request){
 
-    //      $path = $request->photo->store('images');
-    // }
+         $path = $request->photo->store('images');
+
+         $good_id = $request->good_id;
+
+         $addPhoto = Good::where('id',$good_id)->first();
+
+         $createPhoto =$addPhoto->update(['photo_path'=>$path]);
+
+         return response(['message'=>'save']);
+    }
 }

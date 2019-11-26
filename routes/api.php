@@ -28,6 +28,8 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     Route::get('/stations','StationController@index');
 
+    Route::post('/image','GoodController@upload');
+
 });
 
 Route::post('/register','UserController@register');
@@ -36,6 +38,6 @@ Route::post('/login','UserController@login');
 
 Route::post('/stations','StationController@store');
 
-// Route::post('/image','GoodController@upload');
+
 
 
