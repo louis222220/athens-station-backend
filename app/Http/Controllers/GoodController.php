@@ -39,7 +39,7 @@ class GoodController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function test(Request $request)
     {
         $role = $request->user()->role_id;
         //$path = $request->photo->store('images');
@@ -154,7 +154,7 @@ class GoodController extends Controller
     }
 
 
-    public function test(Request $request)
+    public function store(Request $request)
     {
 
         //$role = $request->user()->role_id;
