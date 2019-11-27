@@ -46,6 +46,8 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     Route::Get('/runnerHistory','AchivementController@index');
 
+    Route::Get('/medalStatus','AchivementController@medalStatus');
+
 
 });
 

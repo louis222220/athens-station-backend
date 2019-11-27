@@ -238,7 +238,7 @@ class ShipmentController extends Controller
         if (!$updateStatus) {
             return response(['message' => 'checkin重複，或checkin驛站與任務不符',409]);
         }
-        $updateStatus->update(['status' => '運送中'],200);
+        $updateStatus->update(['status' => '運送中']);
 
 
         $db_shipment_good_id = $updateStatus->good_id;
@@ -319,15 +319,15 @@ class ShipmentController extends Controller
             switch ($total) {
 
                 case 3:
-                    $newRunner->update(['distance' => $runner_distance + 50]);
+                    $newRunner->update(['distance' => $runner_distance + 10]);
                     break;
 
                 case 5:
-                    $runner->update(['distance' => $runner_distance + 100]);
+                    $runner->update(['distance' => $runner_distance + 40]);
                     break;
 
                 case 7:
-                    $runner->update(['distance' => $runner_distance + 150]);
+                    $runner->update(['distance' => $runner_distance + 50]);
                     break;
             }
 
