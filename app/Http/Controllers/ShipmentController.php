@@ -55,11 +55,11 @@ class ShipmentController extends Controller
 
 
         $findShipment = Shipment::where('status', '準備中')->orWhere('status', '未準備')->get();
-//dd($findShipment);
+        //dd($findShipment);
         $shipment_id =  $findShipment->toArray();
 
         if ($shipment_id !== null) {
-            return response(['message'=>'準備中','data'=>$findShipment]);
+            return response(['message' => '準備中', 'data' => $findShipment]);
         } else {
             return response()->json([
                 'message' => "無任務"
@@ -229,16 +229,16 @@ class ShipmentController extends Controller
             ->where('status', '準備中')->value('start_station_id'); //該跑者的運送資料
 
         if ($db_shipment_id == null) {
-            return response(['message' => 'checkin驛站與任務不符'],409);
+            return response(['message' => 'checkin驛站與任務不符'], 409);
         }
         $db_station_name = Station::where('id', $db_shipment_id)->value('name');
 
         if ($db_station_name != $start_station_name) {
-            return response(['message' => 'checkin驛站與任務不符'],409);
+            return response(['message' => 'checkin驛站與任務不符'], 409);
         }
 
         if (!$updateStatus) {
-            return response(['message' => 'checkin重複，或checkin驛站與任務不符',409]);
+            return response(['message' => 'checkin重複，或checkin驛站與任務不符', 409]);
         }
         $updateStatus->update(['status' => '運送中']);
 
@@ -276,14 +276,14 @@ class ShipmentController extends Controller
         $db_station_name = Station::where('id', $db_shipment_id)->value('name');
 
         if ($db_station_name !== $des_station_name) {
-            return response(['message' => 'checkin重複，或checkin驛站與任務不符'],409);
+            return response(['message' => 'checkin重複，或checkin驛站與任務不符'], 409);
         }
         if ($db_shipment_id == null) {
-            return response(['message' => 'checkin重複，或checkin驛站與任務不符'],409);
+            return response(['message' => 'checkin重複，或checkin驛站與任務不符'], 409);
         }
 
         if (!$updateStatus) {
-            return response(['message' => 'checkin重複，或checkin驛站與任務不符'],409);
+            return response(['message' => 'checkin重複，或checkin驛站與任務不符'], 409);
         } else {
             $updateStatus->update(['status' => '已抵達']);
 
@@ -341,5 +341,28 @@ class ShipmentController extends Controller
 
             return response()->json($results);
         }
+    }
+
+
+    public function statusCancel(Request $request)
+    {
+        $shipment_id = $request->shipment_id;
+
+        $id = Auth::user()->id;
+
+        $shipment_datas = Shipment::where('runner_id', $id)->where('status', '運送中')->first();
+
+        if ($shipment_datas == null){
+            return response(['message'=>'你沒有運送中的貨物哦!'],409);
+        }
+            $shipment_good_id = $shipment_datas->good_id;
+
+        $good_datas = Shipment::where('good_id', $shipment_good_id)->get();
+
+        foreach ($good_datas as $good_data) {
+            $good_data->update(['status' => '已註銷','runner_id'=>0]);
+        }
+
+        return response(['message' => '遭遇不測，貨物註銷', 'data' => $good_datas]);
     }
 }
