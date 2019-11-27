@@ -16,7 +16,16 @@ class AchivementController extends Controller
      */
     public function index()
     {
-        //
+        $runner_id = Auth::user()->id;
+
+        $runner_data =Shipment::where('runner_id',$runner_id)->get();
+
+        //Achivement::where('runnder_id',)
+
+        return response(['message'=>'跑者個人運送歷史',
+        'data'=>$runner_data
+        ]);
+
     }
 
     /**

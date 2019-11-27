@@ -48,7 +48,7 @@ class ShipmentController extends Controller
     }
 
 
-    public function getTasks(Request $request)
+    public function getPreparedTasks(Request $request)
     {
         $runner_id = Auth::user()->id;
 
@@ -58,7 +58,7 @@ class ShipmentController extends Controller
         $shipment_id =  $findShipment->toArray();
 
         if ($shipment_id !== null) {
-            return response()->json($findShipment);
+            return response(['message'=>'準備中','data'=>$findShipment]);
         } else {
             return response()->json([
                 'message' => "無任務"
@@ -227,18 +227,18 @@ class ShipmentController extends Controller
             ->where('status', '準備中')->value('start_station_id'); //該跑者的運送資料
 
         if ($db_shipment_id == null) {
-            return response(['message' => 'checkin驛站與任務不符456']);
+            return response(['message' => 'checkin驛站與任務不符'],409);
         }
         $db_station_name = Station::where('id', $db_shipment_id)->value('name');
 
         if ($db_station_name != $start_station_name) {
-            return response(['message' => 'checkin驛站與任務不符123']);
+            return response(['message' => 'checkin驛站與任務不符'],409);
         }
 
         if (!$updateStatus) {
-            return response(['message' => 'checkin重複，或checkin驛站與任務不符']);
+            return response(['message' => 'checkin重複，或checkin驛站與任務不符',409]);
         }
-        $updateStatus->update(['status' => '運送中']);
+        $updateStatus->update(['status' => '運送中'],200);
 
 
         $db_shipment_good_id = $updateStatus->good_id;
@@ -274,14 +274,14 @@ class ShipmentController extends Controller
         $db_station_name = Station::where('id', $db_shipment_id)->value('name');
 
         if ($db_station_name !== $des_station_name) {
-            return response(['message' => 'checkin重複，或checkin驛站與任務不符']);
+            return response(['message' => 'checkin重複，或checkin驛站與任務不符'],409);
         }
         if ($db_shipment_id == null) {
-            return response(['message' => 'checkin重複，或checkin驛站與任務不符']);
+            return response(['message' => 'checkin重複，或checkin驛站與任務不符'],409);
         }
 
         if (!$updateStatus) {
-            return response(['message' => 'checkin重複，或checkin驛站與任務不符']);
+            return response(['message' => 'checkin重複，或checkin驛站與任務不符'],409);
         } else {
             $updateStatus->update(['status' => '已抵達']);
 

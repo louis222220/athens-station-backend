@@ -38,13 +38,13 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     Route::get('/myTask','ShipmentController@getMyTask');
 
-    Route::get('/tasks','ShipmentController@getTasks');
+    Route::get('/preparedTasks','ShipmentController@getPreparedTasks');
 
     Route::post('/checkin','ShipmentController@checkin');
 
     Route::post('/checkout','ShipmentController@checkout');
 
-    Route::post('/achievements','AchivementController@store');
+    Route::Get('/runnerHistory','AchivementController@index');
 
 
 });
