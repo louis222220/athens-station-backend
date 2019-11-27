@@ -143,7 +143,7 @@ class GoodController extends Controller
 
     public function upload(Request $request)
     {
-        $path = $request->photo->store('images');
+        $path = $request->photo->store('public/images');
 
         $good_id = $request->good_id;
 

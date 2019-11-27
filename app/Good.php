@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Good extends Model
 {
@@ -14,6 +15,22 @@ class Good extends Model
     protected $hidden = [
         'photo_path',
     ];
+
+    protected $appends = ['photo_url'];
+
+    
+    public function getPhotoUrlAttribute()
+    {
+        if (Storage::exists($this->photo_path)){
+            $publicPath = 'storage/' . substr($this->photo_path, 7);
+            return url($publicPath);
+        }
+        else {
+            return null;
+        }
+        
+    }
+
 
     public function start_station()
     {

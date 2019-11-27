@@ -11,14 +11,21 @@ class Shipment extends Model
         'good_id','runner_id','start_station_id','des_station_id','status','good_name'
     ];
 
-    protected $appends = ['weight', 'price'];
+    protected $appends = ['weight', 'price', 'photo_url'];
 
     public function good()
     {
         return $this->belongsTo('App\Good');
     }
 
+    
+    public function getPhotoUrlAttribute()
+    {
+        $good = Good::find($this->good_id);
+        return $good->photo_url;
+    }
 
+    
     public function getWeightAttribute()
     {
         $good = Good::find($this->attributes['good_id']);
