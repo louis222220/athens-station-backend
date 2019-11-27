@@ -29,7 +29,7 @@ class Station extends Model
 
     protected function calculateTotalWeightOfShipment()
     {
-        $shipmentFinishedStr = "已完成";
+        $shipmentFinishedStr = "已抵達";
         
         $shipments = Shipment::where('start_station_id', $this->id)
                                 ->where('status', $shipmentFinishedStr)->get();
