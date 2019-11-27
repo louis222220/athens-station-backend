@@ -20,8 +20,6 @@ class AchivementController extends Controller
 
         $runner_data =Shipment::where('runner_id',$runner_id)->get();
 
-        //Achivement::where('runnder_id',)
-
         return response(['message'=>'跑者個人運送歷史',
         'data'=>$runner_data
         ]);
