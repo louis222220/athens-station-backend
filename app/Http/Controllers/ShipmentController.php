@@ -300,15 +300,15 @@ class ShipmentController extends Controller
             switch ($total) {
 
                 case 3:
-                    $newRunner->update(['distance' => $runner_distance + 300]);
+                    $newRunner->update(['distance' => $runner_distance + 50]);
                     break;
 
                 case 5:
-                    $runner->update(['distance' => $runner_distance + 500]);
+                    $runner->update(['distance' => $runner_distance + 100]);
                     break;
 
                 case 7:
-                    $runner->update(['distance' => $runner_distance + 700]);
+                    $runner->update(['distance' => $runner_distance + 150]);
                     break;
             }
 
