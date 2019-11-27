@@ -213,14 +213,10 @@ class GoodController extends Controller
         $posOrMinusOne = (int) ($diff / $count);
         $good_id = $addGood->id;
 
-        $out = new \Symfony\Component\Console\Output\ConsoleOutput();
-        $out->writeln(Carbon::now());
-
         for ($i=0; $i < $count; $i++) {
             $now = $star_id + $posOrMinusOne * $i;
             $next = $star_id + $posOrMinusOne * ($i + 1);
-            $out->writeln("$now, $next");
-
+            
             if ($now == $star_id){
                 $status = '準備中';
             }
