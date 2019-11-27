@@ -36,7 +36,8 @@ class ShipmentController extends Controller
 
 
         $findShipment = Shipment::where('runner_id', $runner_id)
-            ->where('status', '準備中')->first();
+            ->where('status', '準備中')
+            ->orWhere('status', '運送中')->first();
 
         if ($findShipment) {
             return response()->json($findShipment);
@@ -53,7 +54,7 @@ class ShipmentController extends Controller
         $runner_id = Auth::user()->id;
 
 
-        $findShipment = Shipment::where('status', '準備中')->orwhere('status', '未準備')->get();
+        $findShipment = Shipment::where('status', '準備中')->orWhere('status', '未準備')->get();
 //dd($findShipment);
         $shipment_id =  $findShipment->toArray();
 
@@ -124,7 +125,8 @@ class ShipmentController extends Controller
         switch ($shipment_status) {
             case "準備中":
                 $alreadyShipment = Shipment::where('runner_id', $runner_id)
-                    ->where('status', '準備中')->first();
+                    ->where('status', '準備中')
+                    ->orWhere('status', '運送中')->first();
 
                 if ($alreadyShipment) {
                     return response()->json([
