@@ -106,11 +106,11 @@ class AchivementController extends Controller
         $level4 = 4;
         $distance = $data->distance;
 
-        if ($distance < 100) {
+        if ($distance < 1000) {
             $data->update(['badge_name' => '跑者級', 'badge_id' => $level1]);
-        } elseif ($distance >= 100 &&  $distance < 299) {
+        } elseif ($distance >= 1000 &&  $distance < 2999) {
             $data->update(['badge_name' => '刻苦級', 'badge_id' => $level2]);
-        } elseif ($distance >= 300 &&  $distance < 499) {
+        } elseif ($distance >= 3000 &&  $distance < 4999) {
             $data->update(['badge_name' => '精進級', 'badge_id' => $level3]);
         } else {
             $data->update(['badge_name' => '運動建將', 'badge_id' => $level4]);
