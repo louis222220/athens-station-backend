@@ -208,6 +208,7 @@ class GoodController extends Controller
 
         $star_id = $addGood->start_station_id;
         $des_id = $addGood->des_station_id;
+
         $count = abs($star_id - $des_id);
         $diff = $des_id - $star_id;
         $posOrMinusOne = (int) ($diff / $count);
@@ -216,7 +217,7 @@ class GoodController extends Controller
         for ($i=0; $i < $count; $i++) {
             $now = $star_id + $posOrMinusOne * $i;
             $next = $star_id + $posOrMinusOne * ($i + 1);
-            
+
             if ($now == $star_id){
                 $status = '準備中';
             }
@@ -240,5 +241,4 @@ class GoodController extends Controller
 
         return response()->json($result);
     }
-
 }
