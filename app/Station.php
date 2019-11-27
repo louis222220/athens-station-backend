@@ -46,8 +46,8 @@ class Station extends Model
     public function getLevelAttribute()
     {
         $levels = [1, 2, 3, 4];
-        $levelInterval = [0, 100, 500, 1000];
-        // level 1 : 0~99, level 2 : 100~499 ...
+        $levelInterval = [0, 500, 1000, 5000];
+        // level 1 : 0~500, level 2 : 500~999 ...
         
         $totalWeight = $this->calculateTotalWeightOfShipment();
         
