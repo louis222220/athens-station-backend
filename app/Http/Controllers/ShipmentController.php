@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Achivement;
 use App\Shipment;
 use App\Station;
 use App\Good;
@@ -35,17 +36,15 @@ class ShipmentController extends Controller
 
 
         $findShipment = Shipment::where('runner_id', $runner_id)
-                                ->where('status', '準備中')->first();
+            ->where('status', '準備中')->first();
 
-        if ($findShipment){
+        if ($findShipment) {
             return response()->json($findShipment);
-        }
-        else {
+        } else {
             return response()->json([
                 'message' => "尚未接單"
             ], 404);
         }
-        
     }
 
 
@@ -71,7 +70,7 @@ class ShipmentController extends Controller
         $runner_id = Auth::user()->id;
 
         $alreadyShipment = Shipment::where('runner_id', $runner_id)->first();
-        if ($alreadyShipment){
+        if ($alreadyShipment) {
             return response()->json([
                 'message' => '已接單，請勿重複接單'
             ], 409);
@@ -81,6 +80,47 @@ class ShipmentController extends Controller
         $update = $findShipment->update(['runner_id' => $runner_id]);
 
         return response()->json($findShipment);
+    }
+
+    public function teststore(Request $request)
+    {
+        $shipment_id = $request->shipment_id;
+        $runner_id = Auth::user()->id;
+
+        $shipment_status = Shipment::where('id', $shipment_id)->value('status');
+
+        switch ($shipment_status) {
+            case "準備中":
+                $alreadyShipment = Shipment::where('runner_id', $runner_id)
+                    ->where('status', '準備中')->first();
+
+                if ($alreadyShipment) {
+                    return response()->json([
+                        'message' => '已接單，請勿重複接單'
+                    ], 409);
+                } else {
+                    $findShipment = Shipment::where('id', $shipment_id)->first();
+                    $update = $findShipment->update(['runner_id' => $runner_id]);
+
+                    return response()->json([
+                        'message' => '貨物尚未出發', 'data' => $findShipment
+                    ]);
+                }
+
+                // no break
+            case "運送中":
+                return response()->json([
+                    'message' => '千里迢迢送到你手中'
+                ]);
+
+
+            case "已抵達":
+
+                $findShipment = Shipment::where('id', $shipment_id)->first();
+                return response()->json([
+                    'message' => '貨物已抵達', 'data' => $findShipment
+                ]);
+        }
     }
 
     /**
@@ -134,28 +174,43 @@ class ShipmentController extends Controller
 
         $id = Auth::user()->id;
 
-        $shipment = Shipment::where('runner_id', $id)->first(); //該跑者的運送資料
+        $updateStatus = Shipment::where('runner_id', $id)
+            ->where('status', '準備中')->first();
 
-        $req_station_name = Station::where('name', $start_station_name)->value('id'); //比對cityname與station id一致
+        $db_shipment_id = Shipment::where('runner_id', $id)
+            ->where('status', '準備中')->value('start_station_id');
 
-        $db_station_id = $shipment->start_station_id;
-
-        if ($req_station_name == $db_station_id) {
-            $updateStatus = Shipment::where('runner_id', $id)->first()->update(['status' => '運送中']);
-
-            $db_shipment_good_id = $shipment->good_id;
-            $updateGoodStatus = Good::where('id', $db_shipment_good_id)->first()->update(['status' => '運送中']);
-
-            $results = [
-                'message' => '運送中',
-                'data' => $shipment
-            ];
-
-            return response()->json($results);
-        } else {
-            return response(['message' => '請跟驛站人員確認！']);
+        if ($db_shipment_id == null) {
+            return response(['message' => 'checkin驛站與任務不符']);
         }
+        $db_station_name = Station::where('id', $db_shipment_id)->value('name');
+
+        if ($db_station_name !== $start_station_name) {
+            return response(['message' => 'checkin驛站與任務不符']);
+        }
+
+        if (!$updateStatus) {
+            return response(['message' => 'checkin重複，或checkin驛站與任務不符']);
+        }
+        $updateStatus->update(['status' => '運送中']);
+
+
+        $db_shipment_good_id = $updateStatus->good_id;
+        $updateGoodStatus = Good::where('id', $db_shipment_good_id)
+            ->first()->update(['status' => '運送中']);
+
+        $newStatus = Shipment::where('runner_id', $id)
+            ->where('status', '運送中')->first();
+
+        $results = [
+            'message' => '運送中',
+            'data' => $newStatus
+        ];
+
+        return response()->json($results);
     }
+
+
 
     public function checkout(Request $request)
     {
@@ -163,37 +218,79 @@ class ShipmentController extends Controller
 
         $id = Auth::user()->id;
 
-        $shipment = Shipment::where('runner_id', $id)->first(); //該跑者的運送資料
+        //只拿運送中的資料
+        $updateStatus = Shipment::where('runner_id', $id)
+            ->where('status', '運送中')->first();
 
-        $status = $shipment->status;
+        $db_shipment_id = Shipment::where('runner_id', $id)
+            ->where('status', '運送中')->value('des_station_id');
 
-        if ($status !== '運送中') {
-            return response(['message' => '非運送中，請與驛站人員確認']);
+        $db_station_name = Station::where('id', $db_shipment_id)->value('name');
+
+        if ($db_station_name !== $des_station_name) {
+            return response(['message' => 'checkin重複，或checkin驛站與任務不符']);
+        }
+        if ($db_shipment_id == null) {
+            return response(['message' => 'checkin重複，或checkin驛站與任務不符']);
         }
 
-        $req_station_name = Station::where('name', $des_station_name)->value('id'); //比對cityname與station id一致
+        if (!$updateStatus) {
+            return response(['message' => 'checkin重複，或checkin驛站與任務不符']);
+        } else {
+            $updateStatus->update(['status' => '已抵達']);
+            //------------------------------------------------------------------------//
+            $login_id = Auth::user()->id;
 
-        $db_station_id = $shipment->des_station_id;
-        $db_shipment_good_id = $shipment->good_id;
+            $data = Shipment::where('runner_id', $id)
+                ->where('status', '已抵達')->first();
 
-        $db_good = Good::where('id', $db_shipment_good_id)->first();
-        $good_des_id = $db_good->des_station_id;
+            $runner = Achivement::where('runner_id', $login_id)->first();
 
-        if ($req_station_name == $db_station_id) {
-            $shipment->update(['status' => '已抵達']);
-
-            if ($good_des_id == $shipment->good->des_station_id) {
-                $shipment->good->update(['status' => '已抵達']);
+            if (!$runner) {
+                $create_runner = Achivement::create([
+                    'runner_id' => $login_id,
+                ]);
             }
+            $newRunner = Achivement::where('runner_id', $login_id)->first();
+
+            $runner_distance = $newRunner->distance;
+
+            $total = $data->start_station_id + $data->des_station_id;
+
+
+            switch ($total) {
+
+                case 3:
+                    $newRunner->update(['distance' => $runner_distance + 300]);
+
+                    return response()->json([
+                        'message' => '跑者成就增加', 'data' => Achivement::all()
+                    ]);
+
+                case 5:
+                    $runner->update(['distance' => $runner_distance + 500]);
+
+                    return response()->json([
+                        'message' => '跑者成就增加', 'data' => Achivement::all()
+                    ]);
+
+                case 7:
+
+                    $runner->update(['distance' => $runner_distance + 700]);
+
+                    return response()->json([
+                        'message' => '跑者成就增加', 'data' => Achivement::all()
+                    ]);
+            }
+
+            $newStatus = Achivement::where('runner_id', $id)->get();
 
             $results = [
                 'message' => '此段運送結束',
-                'data' => $shipment
+                'data' => $newStatus
             ];
 
             return response()->json($results);
-        } else {
-            return response(['message' => '請跟驛站人員確認！']);
         }
     }
 }

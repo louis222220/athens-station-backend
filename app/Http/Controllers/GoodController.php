@@ -207,41 +207,42 @@ class GoodController extends Controller
 
         $star_id = $addGood->start_station_id;
         $des_id = $addGood->des_station_id;
-        $total = $star_id - $des_id;
+        $total = $des_id - $star_id;
         $good_id = $addGood->id;
 
         if ($total > 0) {  // FIXME:
-            for ($i = -1; $i < $total - 1; $i++) {
-                $a = $total - $i;
-                $b = $a-1;
+            for ($i = 0; $i < $total; $i++) {
+                $a = $star_id + $i;
+                $b = $star_id + $i + 1;
 
-                Shipment::create(['good_id'=>$good_id,
-                //'runner_id'=>$runner_id,
-                'start_station_id'=>$a,
-                'des_station_id'=>$b,
-                'good_name'=>$addGood->name]);
-
+                Shipment::create([
+                    'good_id' => $good_id,
+                    //'runner_id'=>$runner_id,
+                    'start_station_id' => $a,
+                    'des_station_id' => $b,
+                    'good_name' => $addGood->name
+                ]);
             }
+        } else {
+            //$abs = abs($total);
+            for ($i = 0; $i < abs($total); $i++) {
+                $a = $star_id - $i;
+                $b = $star_id - $i - 1;
 
-            $result = [
-                'message' => '已登錄運送貨品',
-                'data' => $Goods,
-            ];
-            return response()->json($result);
-
-        // }else{
-
-        //         for ($i = 0 ; $i > $total ; $i--) {
-        //             $a = $total - $i;
-        //             $b = $a-1;
-
-        //             Shipment::create(['good_id'=>$good_id,
-        //             //'runner_id'=>$runner_id,
-        //             'start_station_id'=>$a,
-        //             'des_station_id'=>$b]);
-        //         }
+                Shipment::create([
+                    'good_id' => $good_id,
+                    //'runner_id'=>$runner_id,
+                    'start_station_id' => $a,
+                    'des_station_id' => $b,
+                    'good_name' => $addGood->name
+                ]);
             }
-
         }
 
+        $result = [
+            'message' => '已登錄運送貨品',
+            'data' => $Goods,
+        ];
+        return response()->json($result);
+    }
 }
