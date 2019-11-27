@@ -7,6 +7,7 @@ use App\Station;
 use App\Shipment;
 use Illuminate\Http\Request;
 use Validator;
+use Carbon\Carbon;
 
 class GoodController extends Controller
 {
@@ -207,50 +208,41 @@ class GoodController extends Controller
 
         $star_id = $addGood->start_station_id;
         $des_id = $addGood->des_station_id;
-        $total = $star_id - $des_id;
+        $count = abs($star_id - $des_id);
+        $diff = $des_id - $star_id;
+        $posOrMinusOne = (int) ($diff / $count);
         $good_id = $addGood->id;
 
-        if ($total > 0) {  // FIXME:
-            for ($i = -1; $i < $total - 1; $i++) {
-                $a = $total - $i;
-                $b = $a-1;
+        $out = new \Symfony\Component\Console\Output\ConsoleOutput();
+        $out->writeln(Carbon::now());
 
-                $status = '';
-                if ($i == -1) {
-                    $status = '準備中';
-                }
-                else {
-                    $status = '未準備';
-                }
-                
-                Shipment::create(['good_id'=>$good_id,
-                    'start_station_id'=>$a,
-                    'des_station_id'=>$b,
-                    'good_name'=>$addGood->name,
-                    'status' => $status,
-                ]);
+        for ($i=0; $i < $count; $i++) {
+            $now = $star_id + $posOrMinusOne * $i;
+            $next = $star_id + $posOrMinusOne * ($i + 1);
+            $out->writeln("$now, $next");
 
+            if ($now == $star_id){
+                $status = '準備中';
+            }
+            else {
+                $status = '未準備';
             }
 
-            $result = [
-                'message' => '已登錄運送貨品',
-                'data' => $Goods,
-            ];
-            return response()->json($result);
-
-        // }else{
-
-        //         for ($i = 0 ; $i > $total ; $i--) {
-        //             $a = $total - $i;
-        //             $b = $a-1;
-
-        //             Shipment::create(['good_id'=>$good_id,
-        //             //'runner_id'=>$runner_id,
-        //             'start_station_id'=>$a,
-        //             'des_station_id'=>$b]);
-        //         }
-            }
+            Shipment::create(['good_id'=>$good_id,
+                'start_station_id'=>$now,
+                'des_station_id'=>$next,
+                'good_name'=>$addGood->name,
+                'status' => $status,
+            ]);
 
         }
+
+        $result = [
+            'message' => '已登錄運送貨品',
+            'data' => $Goods,
+        ];
+
+        return response()->json($result);
+    }
 
 }

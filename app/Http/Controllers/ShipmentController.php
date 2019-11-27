@@ -203,13 +203,15 @@ class ShipmentController extends Controller
 
         if ($reqDesStationId == $shippingShipmentDesStationId) {
             $shippingShipment->update(['status' => '已抵達']);
+            $shippingGood->update(['now_station_id' => $shippingShipmentDesStationId]);
 
             if ($shippingGoodDesStationId == $shippingShipmentDesStationId) {
                 $shippingGood->update(['status' => '已抵達']);
             }
             else{
                 $nextShipment = Shipment::where('good_id', $shippingGood->id)
-                                        ->where('start_start_id', $shippingShipmentDesStationId);
+                                        ->where('start_station_id', $shippingShipmentDesStationId)
+                                        ->first();
                 $nextShipment->update(['status' => '準備中']);
             }
 
