@@ -79,7 +79,7 @@ class ShipmentController extends Controller
 
 
         $findShipment = Shipment::where('id', $shipment_id)->first();
-        if (! $findShipment) {
+        if (!$findShipment) {
             return response()->json([
                 'message' => "無此訂單",
             ], 404);
@@ -119,13 +119,13 @@ class ShipmentController extends Controller
                         'message' => '貨物尚未出發', 'data' => $findShipment
                     ]);
                 }
-            break;
+                break;
 
             case "運送中":
                 return response()->json([
                     'message' => '千里迢迢送到你手中'
                 ], 409);
-            break;
+                break;
 
 
             case "已抵達":
@@ -134,13 +134,13 @@ class ShipmentController extends Controller
                 return response()->json([
                     'message' => '貨物已抵達', 'data' => $findShipment
                 ]);
-            break;
+                break;
 
             case "未準備":
                 return response()->json([
                     'message' => '前位跑者尚未抵達驛站'
                 ], 409);
-            break;
+                break;
 
             default:
                 return response()->json([
@@ -196,6 +196,7 @@ class ShipmentController extends Controller
 
     public function checkin(Request $request)
     {
+
         $start_station_name = $request->start_station_name;
 
         $id = Auth::user()->id;
@@ -207,12 +208,12 @@ class ShipmentController extends Controller
             ->where('status', '準備中')->value('start_station_id'); //該跑者的運送資料
 
         if ($db_shipment_id == null) {
-            return response(['message' => 'checkin驛站與任務不符']);
+            return response(['message' => 'checkin驛站與任務不符456']);
         }
         $db_station_name = Station::where('id', $db_shipment_id)->value('name');
 
-        if ($db_station_name !== $start_station_name) {
-            return response(['message' => 'checkin驛站與任務不符']);
+        if ($db_station_name != $start_station_name) {
+            return response(['message' => 'checkin驛站與任務不符123']);
         }
 
         if (!$updateStatus) {
@@ -234,7 +235,6 @@ class ShipmentController extends Controller
         ];
 
         return response()->json($results);
-
     }
 
 
@@ -265,16 +265,15 @@ class ShipmentController extends Controller
             return response(['message' => 'checkin重複，或checkin驛站與任務不符']);
         } else {
             $updateStatus->update(['status' => '已抵達']);
-            
 
-            if ($updateStatus->good->des_station_id == $updateStatus->des_station_id){
+
+            if ($updateStatus->good->des_station_id == $updateStatus->des_station_id) {
                 $updateStatus->good->update(['status' => '已抵達']);
-            }
-            else {
+            } else {
                 $nextShipment = Shipment::where('good_id', $updateStatus->good_id)
-                                        ->where('start_station_id', $updateStatus->des_station_id)
-                                        ->first();
-                                        
+                    ->where('start_station_id', $updateStatus->des_station_id)
+                    ->first();
+
                 $nextShipment->update(['status' => '準備中']);
             }
 
@@ -302,33 +301,21 @@ class ShipmentController extends Controller
 
                 case 3:
                     $newRunner->update(['distance' => $runner_distance + 300]);
-
-                    return response()->json([
-                        'message' => '跑者成就增加', 'data' => Achivement::all()
-                    ]);
+                    break;
 
                 case 5:
                     $runner->update(['distance' => $runner_distance + 500]);
-
-                    return response()->json([
-                        'message' => '跑者成就增加', 'data' => Achivement::all()
-                    ]);
+                    break;
 
                 case 7:
-
                     $runner->update(['distance' => $runner_distance + 700]);
-
-                    return response()->json([
-                        'message' => '跑者成就增加', 'data' => Achivement::all()
-                    ]);
+                    break;
             }
-
-            $newStatus = Achivement::where('runner_id', $id)->get();
 
             $results = [
                 'message' => '此段運送結束',
 
-                'data' => $newStatus
+                'data' => $updateStatus
             ];
 
             return response()->json($results);
