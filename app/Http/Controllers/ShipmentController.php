@@ -112,8 +112,12 @@ class ShipmentController extends Controller
         }
 
         $findShipment->update(['runner_id' => $runner_id]);
-        return response()->json($findShipment);
+        return response()->json([
+            'message' => '成功接到訂單',
+            $findShipment
+        ]);
     }
+
 
     public function teststore(Request $request)
     {
