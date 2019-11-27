@@ -24,8 +24,9 @@ class Shipment extends Model
 
     public function getDistanceAttribute()
     {
+        // factor
         $distancesBetweenStation = [100, 200, 300];
-        // 雅典-菲基斯, 菲基斯-阿卡迪亞, 阿卡迪亞-斯巴達
+        // km: 雅典-菲基斯, 菲基斯-阿卡迪亞, 阿卡迪亞-斯巴達
 
         $distanceIndex = min($this->start_station_id, $this->des_station_id);
         return $distancesBetweenStation[$distanceIndex - 1];
@@ -60,7 +61,22 @@ class Shipment extends Model
 
     public function getPriceAttribute()
     {
-        return 20;
+        // factor
+        $stationCommissionPercent = 0.2;
+        // 陣營抽走的佣金比例
+
+        $thisGood = Good::find($this->attributes['good_id']);
+        $thisGoodShipments = Shipment::where('good_id', $this->good_id)->get();
+        $goodTotalDistance = 0;
+
+        foreach($thisGoodShipments as $shipment){
+            $goodTotalDistance += $shipment->distance;
+        }
+
+        $price = (int) ( $thisGood->price
+                        * ($this->getDistanceAttribute() / $goodTotalDistance) // 依距離比例平分
+                        * ( 1 - $stationCommissionPercent ) );
+        return $price;
     }
 
 
