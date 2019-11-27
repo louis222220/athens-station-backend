@@ -141,8 +141,9 @@ class ShipmentController extends Controller
                     $update = $findShipment->update(['runner_id' => $runner_id]);
 
                     return response()->json([
-                        'message' => '貨物尚未出發', 'data' => $findShipment
-                    ], 409);
+                        'message' => '成功接單，貨物尚未出發',
+                        'data' => $findShipment
+                    ]);
                 }
                 break;
 
