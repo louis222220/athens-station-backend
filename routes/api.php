@@ -38,6 +38,8 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     Route::get('/myTask','ShipmentController@getMyTask');
 
+    Route::get('/tasks','ShipmentController@getTasks');
+
     Route::post('/checkin','ShipmentController@checkin');
 
     Route::post('/checkout','ShipmentController@checkout');
@@ -52,7 +54,6 @@ Route::post('/register','UserController@register');
 Route::post('/login','UserController@login');
 
 Route::post('/stations','StationController@store');
-
 
 Route::post('/test/goods','GoodController@test');//test
 

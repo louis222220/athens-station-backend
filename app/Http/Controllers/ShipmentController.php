@@ -48,6 +48,25 @@ class ShipmentController extends Controller
     }
 
 
+    public function getTasks(Request $request)
+    {
+        $runner_id = Auth::user()->id;
+
+
+        $findShipment = Shipment::where('status', '準備中')->orwhere('status', '未準備')->get();
+//dd($findShipment);
+        $shipment_id =  $findShipment->toArray();
+
+        if ($shipment_id !== null) {
+            return response()->json($findShipment);
+        } else {
+            return response()->json([
+                'message' => "無任務"
+            ], 404);
+        }
+    }
+
+
     /**
      * Show the form for creating a new resource.
      *
@@ -117,7 +136,7 @@ class ShipmentController extends Controller
 
                     return response()->json([
                         'message' => '貨物尚未出發', 'data' => $findShipment
-                    ]);
+                    ], 409);
                 }
                 break;
 
@@ -133,7 +152,7 @@ class ShipmentController extends Controller
                 $findShipment = Shipment::where('id', $shipment_id)->first();
                 return response()->json([
                     'message' => '貨物已抵達', 'data' => $findShipment
-                ]);
+                ], 200);
                 break;
 
             case "未準備":
