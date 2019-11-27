@@ -373,7 +373,8 @@ class ShipmentController extends Controller
             $good_data->update(['status' => '已註銷','runner_id'=>0]);
         }
 
-        return response(['message' => '遭遇不測，貨物註銷', 'data' => $good_datas],
-        409);
+        //return response(['message' => '已註銷', 'data' => $good_datas]);
+        return response(['message' => '已註銷']);
+
     }
 }
