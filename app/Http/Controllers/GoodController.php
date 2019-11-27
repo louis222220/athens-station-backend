@@ -236,7 +236,7 @@ class GoodController extends Controller
 
         $result = [
             'message' => '已登錄運送貨品',
-            'data' => $Goods,
+            'data' => $addGood,
         ];
 
         return response()->json($result);
