@@ -313,25 +313,30 @@ class ShipmentController extends Controller
             }
             $newRunner = Achivement::where('runner_id', $login_id)->first();
 
-            $runner_distance = $newRunner->distance;
+            $newRunner->update([
+                'distance' => $newRunner->distance + $updateStatus->distance
+            ]);
 
-            $total = $data->start_station_id + $data->des_station_id;
+            //
+            // $runner_distance = $newRunner->distance;
+
+            // $total = $data->start_station_id + $data->des_station_id;
 
 
-            switch ($total) {
+            // switch ($total) {
 
-                case 3:
-                    $newRunner->update(['distance' => $runner_distance + 10]);
-                    break;
+            //     case 3:
+            //         $newRunner->update(['distance' => $runner_distance + 10]);
+            //         break;
 
-                case 5:
-                    $runner->update(['distance' => $runner_distance + 40]);
-                    break;
+            //     case 5:
+            //         $runner->update(['distance' => $runner_distance + 40]);
+            //         break;
 
-                case 7:
-                    $runner->update(['distance' => $runner_distance + 50]);
-                    break;
-            }
+            //     case 7:
+            //         $runner->update(['distance' => $runner_distance + 50]);
+            //         break;
+            // }
 
             $results = [
                 'message' => '此段運送結束',

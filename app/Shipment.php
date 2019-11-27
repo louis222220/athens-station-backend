@@ -12,12 +12,23 @@ class Shipment extends Model
     ];
 
     protected $appends = ['weight', 'price', 'photo_url',
-     'start_station_name', 'des_station_name',
+        'start_station_name', 'des_station_name',
+        'distance'
     ];
 
     public function good()
     {
         return $this->belongsTo('App\Good');
+    }
+
+
+    public function getDistanceAttribute()
+    {
+        $distancesBetweenStation = [100, 200, 300];
+        // 雅典-菲基斯, 菲基斯-阿卡迪亞, 阿卡迪亞-斯巴達
+
+        $distanceIndex = min($this->start_station_id, $this->des_station_id);
+        return $distancesBetweenStation[$distanceIndex - 1];
     }
 
 
