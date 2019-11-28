@@ -365,13 +365,17 @@ class ShipmentController extends Controller
         if ($shipment_datas == null){
             return response(['message'=>'你沒有運送中的貨物哦!'],409);
         }
-            $shipment_good_id = $shipment_datas->good_id;
+        
+        $shipment_good_id = $shipment_datas->good_id;
 
         $good_datas = Shipment::where('good_id', $shipment_good_id)->get();
 
         foreach ($good_datas as $good_data) {
             $good_data->update(['status' => '已註銷','runner_id'=>0]);
         }
+
+        $theGood = Good::where('id', $shipment_good_id)->get();
+        $theGood->update(['status' => '已註銷']);
 
         //return response(['message' => '已註銷', 'data' => $good_datas]);
         return response(['message' => '已註銷']);
