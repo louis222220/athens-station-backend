@@ -104,7 +104,9 @@ class AchivementController extends Controller
             $tmpNewAchievement = new Achivement([
                 'runner_id' => $id,
                 'badge_id' => 1,
-                'badge_name' => '跑者級'
+                'badge_name' => '跑者級',
+                'distance' => 0,
+                'income' => 0
             ]);
 
             return response()->json([

@@ -16,6 +16,20 @@ class Achivement extends Model
     protected $appends = ['income'];
 
 
+    public function getDistanceAttribute()
+    {
+        $runnerArrivedShipments = Shipment::where('runner_id', $this->attributes['runner_id'])
+                                    ->where('status', '已抵達')
+                                    ->get();
+        
+        $totalRunnerDistance = 0;
+        foreach ($runnerArrivedShipments as $aRunnerArrivedShipment){
+            $totalRunnerDistance += $aRunnerArrivedShipment->distance;
+        }
+        return $totalRunnerDistance;
+    }
+
+
     public function getIncomeAttribute()
     {
         $runnerArrivedShipments = Shipment::where('runner_id', $this->attributes['runner_id'])
