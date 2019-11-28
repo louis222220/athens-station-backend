@@ -55,7 +55,7 @@ class Shipment extends Model
     public function getWeightAttribute()
     {
         $good = Good::find($this->attributes['good_id']);
-        return (int) $good->weight;
+        return $good->weight;
     }
 
 
