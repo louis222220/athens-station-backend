@@ -4,12 +4,31 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use App\Shipment;
 
 class Achivement extends Model
 {
     protected $fillable = [
         'runner_id', 'distance', 'badge_id', 'badge_name'
     ];
+
+
+    protected $appends = ['income'];
+
+
+    public function getIncomeAttribute()
+    {
+        $runnerArrivedShipments = Shipment::where('runner_id', $this->attributes['runner_id'])
+                                    ->where('status', '已抵達')
+                                    ->get();
+        
+        $totalRunnerIncome = 0;
+        foreach ($runnerArrivedShipments as $aRunnerArrivedShipment){
+            $totalRunnerIncome += $aRunnerArrivedShipment->price;
+        }
+
+        return $totalRunnerIncome;
+    }
 }
 //     protected $appends = ['medal'];
 
