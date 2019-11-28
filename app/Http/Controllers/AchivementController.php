@@ -100,6 +100,19 @@ class AchivementController extends Controller
         $id = $user->id;
         $data = Achivement::where('runner_id', $id)->first();
 
+        if (! $data){
+            $tmpNewAchievement = new Achivement([
+                'runner_id' => $id,
+                'badge_id' => 1,
+                'badge_name' => '跑者級'
+            ]);
+
+            return response()->json([
+                'message' => '跑者累積紀錄',
+                'data' => $tmpNewAchievement
+            ]);
+        }
+
         $level1 = 1;
         $level2 = 2;
         $level3 = 3;
