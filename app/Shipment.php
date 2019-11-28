@@ -25,7 +25,7 @@ class Shipment extends Model
     public function getDistanceAttribute()
     {
         // factor
-        $distancesBetweenStation = [100, 200, 300];
+        $distancesBetweenStation = [187, 136, 95];
         // km: 雅典-菲基斯, 菲基斯-阿卡迪亞, 阿卡迪亞-斯巴達
 
         $distanceIndex = min($this->start_station_id, $this->des_station_id);
