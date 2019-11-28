@@ -374,7 +374,7 @@ class ShipmentController extends Controller
             $good_data->update(['status' => '已註銷','runner_id'=>0]);
         }
 
-        $theGood = Good::where('id', $shipment_good_id)->get();
+        $theGood = Good::where('id', $shipment_good_id)->first();
         $theGood->update(['status' => '已註銷']);
 
         //return response(['message' => '已註銷', 'data' => $good_datas]);
