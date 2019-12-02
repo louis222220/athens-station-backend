@@ -21,7 +21,7 @@ class UserController extends Controller
         $inputs = $request->all();
 
         $rules = [
-            'username' => 'required',
+            'username' => 'required|unique:users',
             'password' => 'required',
             'role' => 'required'
         ];
