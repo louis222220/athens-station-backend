@@ -37,7 +37,8 @@ class ShipmentController extends Controller
 
         $findShipment = Shipment::where('runner_id', $runner_id)
             ->where('status', '準備中')
-            ->orWhere('status', '運送中')->first();
+            ->orWhere('runner_id', $runner_id)
+            ->where('status', '運送中')->first();
 
         if ($findShipment) {
             return response()->json($findShipment);
