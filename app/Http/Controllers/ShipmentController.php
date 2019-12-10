@@ -6,7 +6,7 @@ use App\Achivement;
 use App\Shipment;
 use App\Station;
 use App\Good;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
@@ -19,7 +19,7 @@ class ShipmentController extends Controller
      */
     public function index()
     {
-        $tasklist = Shipment::all();
+        $tasklist = Shipment::orderBy('id', 'desc')->get();
 
         $result = [
             'message' => '任務列表',
@@ -55,7 +55,10 @@ class ShipmentController extends Controller
         $runner_id = Auth::user()->id;
 
 
-        $findShipment = Shipment::where('status', '準備中')->orWhere('status', '未準備')->get();
+        $findShipment = Shipment::where('status', '準備中')
+                                ->orWhere('status', '未準備')
+                                ->orderBy('id', 'desc')
+                                ->get();
         //dd($findShipment);
         $shipment_id =  $findShipment->toArray();
 
