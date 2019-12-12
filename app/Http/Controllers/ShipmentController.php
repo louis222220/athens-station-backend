@@ -142,7 +142,7 @@ class ShipmentController extends Controller
                         'message' => '已接單，請勿重複接單'
                     ], 409);
                 }
-                elseif ($shipment->runner_id or ($shipment->runner != $runner_id)) {
+                elseif ($shipment->runner_id and ($shipment->runner_id != $runner_id)) {
                     return response()->json([
                         'message' => '其他跑者已接此單，請選擇其他貨物'
                     ], 409);
