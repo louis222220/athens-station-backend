@@ -18,7 +18,7 @@ class GoodController extends Controller
      */
     public function index()
     {
-        $allGoods = Good::with('start_station', 'des_station', 'now_station')->get();
+        $allGoods = Good::get();
         $result = [
             'message' => '取得所有貨物',
             'data' => $allGoods
