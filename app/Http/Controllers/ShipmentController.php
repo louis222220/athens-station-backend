@@ -128,19 +128,26 @@ class ShipmentController extends Controller
         $shipment_id = $request->shipment_id;
         $runner_id = Auth::user()->id;
 
-        $shipment_status = Shipment::where('id', $shipment_id)->value('status');
+        $shipment = Shipment::where('id', $shipment_id);
 
-        switch ($shipment_status) {
+        switch ($shipment->status) {
             case "準備中":
                 $alreadyShipment = Shipment::where('runner_id', $runner_id)
                     ->where('status', '準備中')
-                    ->orWhere('status', '運送中')->first();
+                    ->orWhere('runner_id', $runner_id)
+                    ->where('status', '運送中')->first();
 
                 if ($alreadyShipment) {
                     return response()->json([
                         'message' => '已接單，請勿重複接單'
                     ], 409);
-                } else {
+                }
+                elseif ($shipment->runner_id or ($shipment->runner != $runner_id)) {
+                    return response()->json([
+                        'message' => '其他跑者已接此單，請選擇其他貨物'
+                    ], 409);
+                }
+                else {
                     $findShipment = Shipment::where('id', $shipment_id)->first();
                     $update = $findShipment->update(['runner_id' => $runner_id]);
 
