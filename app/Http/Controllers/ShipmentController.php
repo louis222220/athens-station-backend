@@ -128,7 +128,8 @@ class ShipmentController extends Controller
         $shipment_id = $request->shipment_id;
         $runner_id = Auth::user()->id;
 
-        $shipment = Shipment::where('id', $shipment_id);
+        $shipment = Shipment::where('id', $shipment_id)
+                                ->first();
 
         switch ($shipment->status) {
             case "準備中":
