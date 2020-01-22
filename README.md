@@ -10,19 +10,19 @@ This repo is the source code of backend server.
 
 - Upload a good by station admin
 
-<img src="https://i.imgur.com/IX1bN9k.gif" width="200" />
+https://i.imgur.com/IX1bN9k.gif
 
 - Good History
 
-<img src="https://i.imgur.com/Phl98H8.gif" width="200" />
+https://i.imgur.com/Phl98H8.gif
 
 - Take a task by runner
 
-<img src="https://i.imgur.com/rttR2ju.gif" width="200" />
+https://i.imgur.com/rttR2ju.gif
 
 - Carry a good to its destination station by runner
 
-<img src="https://i.imgur.com/5JXZqVn.gif" width="200" />
+https://i.imgur.com/5JXZqVn.gif
 
 
 ## Team members
